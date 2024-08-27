@@ -1,9 +1,9 @@
-import {DataTable} from '@/components/table/DataTable'
+import { DataTable } from '@/components/table/DataTable'
 import StatCard from '@/components/StatCard'
 import { getRecentAppointmentList } from '@/lib/actions/appointment.actions'
 import Image from 'next/image'
 import Link from 'next/link'
-import {columns, Payment} from '@/components/table/columns'
+import { columns } from '@/components/table/columns'
 
 const Admin = async () => {
     const appointments = await getRecentAppointmentList();
@@ -29,21 +29,21 @@ const Admin = async () => {
                     <h1 className='header'>Welcome 👋</h1>
                     <p className='text-dark-700'>Start the day with managing new appointments</p>
                 </section>
-                
+
                 <section className='admin-stat'>
-                    <StatCard 
+                    <StatCard
                         type="appointments"
                         count={appointments.scheduledCount}
                         label='Scheduled appointments'
                         icon="/assets/icons/appointments.svg"
                     />
-                    <StatCard 
+                    <StatCard
                         type="pending"
                         count={appointments.pendingCount}
                         label='Pending appointments'
                         icon="/assets/icons/pending.svg"
                     />
-                    <StatCard 
+                    <StatCard
                         type="cancelled"
                         count={appointments.cancelledCount}
                         label='Cancelled appointments'
@@ -51,7 +51,7 @@ const Admin = async () => {
                     />
                 </section>
 
-                <DataTable 
+                <DataTable
                     columns={columns}
                     data={appointments.documents}
                 />
