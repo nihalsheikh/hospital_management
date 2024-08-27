@@ -1,5 +1,4 @@
 # CarePulse Patient Management System
----
 
 ## Getting Started
 
