@@ -1,5 +1,8 @@
 'use client'
 
+import { useState } from "react";
+import { Button } from "./ui/button";
+
 import {
     Dialog,
     DialogContent,
@@ -8,23 +11,30 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { useState } from "react";
-import { Button } from "./ui/button";
+
 import AppointmentForm from "./forms/AppointmentForm";
 import { Appointment } from "@/types/appwrite.types";
 
-const AppointmentModal = ({ type, patientId, userId, appointment }: {
-    type: 'schedule' | 'cancel'
-    patientId: string,
-    userId: string,
-    appointment?: Appointment
+const AppointmentModal = ({ 
+    type, 
+    userId, 
+    patientId, 
+    appointment 
+}: {
+    type: 'schedule' | 'cancel';
+    userId: string;
+    patientId: string;
+    appointment?: Appointment;
 }) => {
     const [open, setOpen] = useState(false);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="ghost" className={`capitalize ${type=== 'schedule' && 'text-green-500'}`}>
+                <Button 
+                    variant="ghost" 
+                    className={`capitalize ${type === 'schedule' && 'text-green-500'}`}
+                >
                     {type}
                 </Button>
             </DialogTrigger>
@@ -34,7 +44,7 @@ const AppointmentModal = ({ type, patientId, userId, appointment }: {
                         {type} Appointment
                     </DialogTitle>
                     <DialogDescription>
-                        Please fill in the following details to {type} an appointment
+                        Please fill in the following details to {type} appointment
                     </DialogDescription>
                 </DialogHeader>
 
@@ -47,7 +57,6 @@ const AppointmentModal = ({ type, patientId, userId, appointment }: {
                 />
             </DialogContent>
         </Dialog>
-
     )
 }
 

@@ -86,7 +86,7 @@ const PatientForm = () => {
                     fieldType={FormFieldType.PHONE_INPUT}
                     control={form.control}
                     name="phone"
-                    label="Phone Number"
+                    label="Mobile Number"
                     placeholder="+91 12345 67890"
                 />
 

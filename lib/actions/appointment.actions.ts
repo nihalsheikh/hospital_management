@@ -1,10 +1,18 @@
 'use server'
 
-import { ID, Query } from "node-appwrite";
-import { APPOINTMENT_COLLECTION_ID, DATABASE_ID, databases } from "../appwrite.config";
-import { parseStringify } from "../utils";
-import { Appointment } from "@/types/appwrite.types";
 import { revalidatePath } from "next/cache";
+import { ID, Query } from "node-appwrite";
+
+import { Appointment } from "@/types/appwrite.types";
+
+import { 
+    APPOINTMENT_COLLECTION_ID, 
+    DATABASE_ID, 
+    databases, 
+    messaging 
+} from "../appwrite.config";
+
+import { formatDateTime, parseStringify } from "../utils";
 
 export const createAppointment = async (appointment: CreateAppointmentParams) => {
     try {
@@ -13,11 +21,12 @@ export const createAppointment = async (appointment: CreateAppointmentParams) =>
             APPOINTMENT_COLLECTION_ID!,
             ID.unique(),
             appointment
-        )
+        );
         
+        revalidatePath("/admin");
         return parseStringify(newAppointment);
     } catch (error) {
-        console.log(error);
+        console.log("An error occurred while creating a new appointment:", error);
     }
 }
 
@@ -31,7 +40,7 @@ export const getAppointment = async (appointmentId: string) => {
 
         return parseStringify(appointment);
     } catch (error) {
-        console.log(error);
+        console.log("An error occurred while retrieving the existing patient:", error);
     }
 }
 
@@ -64,12 +73,12 @@ export const getRecentAppointmentList = async () => {
         const data = {
             totalCount: appointments.total,
             ...counts,
-            documents: appointments.documents
+            documents: appointments.documents,
         };
 
         return parseStringify(data);
     } catch (error) {
-        console.log(error);
+        console.log("An error occurred while retrieving the recent appointments:", error);
     }
 }
 
@@ -86,11 +95,33 @@ export const updateAppointment = async ({ appointmentId, userId, appointment, ty
             throw new Error('Appointment not found');
         }
 
-        // TODO SMS Notification
-        
+        const smsMessage = `
+            Greetings from CarePulse.
+            ${type === 'schedule' 
+                ? `Your appointment has been scheduled for ${formatDateTime(appointment.schedule!).dateTime} with Dr. ${appointment.primaryPhysician}`
+                : `We regret to inform that your appointment for ${formatDateTime(appointment.schedule!).dateTime} is cancelled. Reason:  ${appointment.cancellationReason}`}.
+            `;
+
+        await sendSMSNotification(userId, smsMessage);
+
         revalidatePath('/admin');
         return parseStringify(updatedAppointment);
     } catch (error) {
-        console.log(error)
+        console.log("An error occurred while scheduling an appointment:", error)
+    }
+}
+
+export const sendSMSNotification = async (userId: string, content: string) => {
+    try {
+        const message = await messaging.createSms(
+            ID.unique(),
+            content,
+            [],
+            [userId]
+        );
+
+        return parseStringify(message)
+    } catch (error) {
+        console.log("An error occurred while sending sms:", error)
     }
 }

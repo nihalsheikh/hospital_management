@@ -1,4 +1,4 @@
-'use server'
+'use server';
 
 import { ID, Query } from "node-appwrite"
 import { BUCKET_ID, DATABASE_ID, databases, ENDPOINT, PATIENT_COLLECTION_ID, PROJECT_ID, storage, users } from "../appwrite.config"
@@ -7,6 +7,7 @@ import { IdentificationTypes } from "@/constants";
 
 import { InputFile } from "node-appwrite/file"
 
+// Create Appwrite User
 export const createUser = async (user: CreateUserParams) => {
     try {
         const newUser = await users.create(
@@ -16,6 +17,8 @@ export const createUser = async (user: CreateUserParams) => {
             undefined, 
             user.name
         );
+
+        return parseStringify(newUser);
     } catch (error: any) {
         if(error && error?.code === 409) {
             const documents = await users.list([
@@ -24,6 +27,7 @@ export const createUser = async (user: CreateUserParams) => {
 
             return documents?.users[0]
         }
+        console.error("An error occurred while creating a new user:", error);
     }
 };
 
@@ -33,7 +37,7 @@ export const getUser = async (userId: string) => {
 
         return parseStringify(user);
     } catch (error) {
-        console.log(error)
+        console.log("An error occurred while retrieving the user details:", error)
     }
 }
 
@@ -64,7 +68,7 @@ export const registerPatient = async ({ identificationDocument, ...patient }:
 
             return parseStringify(newPatient);
         } catch (error) {
-            console.log(error);
+            console.log("An error occurred while creating a new patient:", error);
         }
 }
 
@@ -78,6 +82,6 @@ export const getPatient = async (userId: string) => {
 
         return parseStringify(patients.documents[0]);
     } catch (error) {
-        console.log(error)
+        console.log("An error occurred while retrieving the patient details:", error)
     }
-}
+};
