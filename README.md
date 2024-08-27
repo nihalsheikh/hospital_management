@@ -1,6 +1,7 @@
 # CarePulse Patient Management System
 
-## Getting Started
+
+### Getting Started
 
 First, run the development server:
 
